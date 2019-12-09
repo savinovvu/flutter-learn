@@ -32,17 +32,7 @@ class _HomeState extends State<Home> {
             color: Colors.white,
           ),
         ),
-        bottom: PreferredSize(
-          child: Container(
-            color: Colors.lightGreen.shade100,
-            height: 75.0,
-            width: double.infinity,
-            child: Center(
-              child: Text('Bottom'),
-            ),
-          ),
-          preferredSize: Size.fromHeight(75.0),
-        ),
+        bottom: const PopupMenuButtonWidget(),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -51,8 +41,14 @@ class _HomeState extends State<Home> {
             child: Column(
               children: <Widget>[
                 const ColumnWidget(),
+                Divider(),
                 const ColumnAndRowNestingWidget(),
+                Divider(),
                 const ContainerWithBoxDecorationWidget(),
+                Divider(),
+                const ButtonsWidget(),
+                Divider(),
+                const ButtonBarWidget()
               ],
             ),
           ),
@@ -60,10 +56,9 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: () {},
         child: Icon(Icons.play_arrow),
         backgroundColor: Colors.lightGreen.shade100,
-
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.lightGreen.shade100,
@@ -73,14 +68,107 @@ class _HomeState extends State<Home> {
             Icon(Icons.pause),
             Icon(Icons.stop),
             Icon(Icons.access_time),
-            Padding( padding: EdgeInsets.all(32.0),)
-
+            Padding(
+              padding: EdgeInsets.all(32.0),
+            )
           ],
-
         ),
-
       ),
+    );
+  }
+}
 
+class ButtonBarWidget extends StatelessWidget {
+  const ButtonBarWidget({
+    Key key,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white70,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.map),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.airport_shuttle),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.brush),
+            highlightColor: Colors.purple,
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ButtonsWidget extends StatelessWidget {
+  const ButtonsWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(16.0)),
+            FlatButton(
+              onPressed: () {},
+              child: Text('Flag'),
+            ),
+            Padding(padding: EdgeInsets.all(16.0)),
+            FlatButton(
+              onPressed: () {},
+              child: Icon(Icons.flag),
+              color: Colors.lightGreen,
+              textColor: Colors.white,
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(16.0)),
+            RaisedButton(
+              onPressed: () {},
+              child: Text('Save'),
+            ),
+            Padding(padding: EdgeInsets.all(16.0)),
+            RaisedButton(
+              onPressed: () {},
+              child: Icon(Icons.save),
+              color: Colors.lightGreen,
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(16.0)),
+            IconButton(
+              icon: Icon(Icons.flight),
+              onPressed: () {},
+            ),
+            Padding(padding: EdgeInsets.all(16.0)),
+            IconButton(
+              icon: Icon(Icons.flight),
+              iconSize: 42.0,
+              color: Colors.lightGreen,
+              tooltip: 'Flight',
+              onPressed: () {},
+            ),
+          ],
+        ),
+        Divider(),
+      ],
     );
   }
 }
@@ -215,11 +303,54 @@ class ContainerWithBoxDecorationWidget extends StatelessWidget {
   }
 }
 
-class TodoMenuItem{
+class PopupMenuButtonWidget extends StatelessWidget implements PreferredSizeWidget {
+  const PopupMenuButtonWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+// implement preferredSize
+  Size get preferredSize => Size.fromHeight(75.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.lightGreen.shade100,
+      height: preferredSize.height,
+      width: double.infinity,
+      child: Center(
+        child: PopupMenuButton<TodoMenuItem>(
+          icon: Icon(Icons.view_list),
+          onSelected: ((valueSelected) {
+            print('valueSelected: ${valueSelected.title}');
+          }),
+          itemBuilder: (BuildContext context) {
+            return foodMenuList.map((TodoMenuItem todoMenuItem) {
+              return PopupMenuItem<TodoMenuItem>(
+                value: todoMenuItem,
+                child: Row(
+                  children: <Widget>[
+                    Icon(todoMenuItem.icon.icon),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                    ),
+                    Text(todoMenuItem.title),
+                  ],
+                ),
+              );
+            }).toList();
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class TodoMenuItem {
   final String title;
   final Icon icon;
-  TodoMenuItem({this.title, this.icon});
 
+  TodoMenuItem({this.title, this.icon});
 }
 
 List<TodoMenuItem> foodMenuList = [
